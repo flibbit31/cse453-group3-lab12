@@ -8,3 +8,20 @@
 ########################################################################
 
 # you may need to put something here...
+
+from enum import Enum
+
+class SecurityLevel(Enum):
+    Public = 1
+    Confidential = 2
+    Privileged = 3
+    Secret = 4 
+
+#SecurityLevel = Enum('SecurityLevel', ['Public', 'Confidential', 'Privileged', 'Secret'])
+
+def securityConditionRead(assetControl, subjectControl):
+    return subjectControl >= assetControl
+
+def securityConditionWrite(assetControl, subjectControl):
+    return subjectControl <= assetControl
+    

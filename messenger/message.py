@@ -23,6 +23,7 @@ class Message:
     # Set a message to empty
     ##################################################
     def __init__(self):
+        self.text_control = control.SecurityLevel.Secret #Should this be set to SECRET?
         self._empty = True
         self._text = "Empty"
         self._author = ""
@@ -34,7 +35,8 @@ class Message:
     # MESSAGE NON-DEFAULT CONSTRUCTOR
     # Create a message and fill it
     ##################################################   
-    def __init__(self, text, author, date):
+    def __init__(self, text_control, text, author, date):
+        self.text_control = text_control
         self._text = text
         self._author = author
         self._date = date

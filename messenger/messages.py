@@ -41,6 +41,16 @@ class Messages:
                 m.display_text()
                 return True
         return False
+    
+    ##################################################
+    # MESSAGES :: FIND BY ID
+    # Find a message by id
+    ##################################################
+    def find_by_id(self, id):
+        for m in self._messages:
+            if m.get_id() == id:
+                return m
+        return False
 
     ##################################################
     # MESSAGES :: UPDATE
@@ -64,8 +74,8 @@ class Messages:
     # MESSAGES :: ADD
     # Add a new message
     ################################################## 
-    def add(self, text, author, date):
-        m = message.Message(text, author, date)
+    def add(self, text_control, text, author, date):
+        m = message.Message(text_control, text, author, date)
         self._messages.append(m)
 
     ##################################################
@@ -77,7 +87,7 @@ class Messages:
             with open(filename, "r") as f:
                 for line in f:
                     text_control, author, date, text = line.split('|')
-                    self.add(text.rstrip('\r\n'), author, date)
+                    self.add(control.SecurityLevel[text_control], text.rstrip('\r\n'), author, date)
 
         except FileNotFoundError:
             print(f"ERROR! Unable to open file \"{filename}\"")

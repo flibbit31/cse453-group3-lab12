@@ -14,16 +14,17 @@ import messages, control
 # User has a name and a password
 ###############################################################
 class User:
-    def __init__(self, name, password):
+    def __init__(self, name, password, subject_control):
         self.name = name
         self.password = password
+        self.subject_control = subject_control
 
 userlist = [
-   [ "AdmiralAbe",     "password" ],  
-   [ "CaptainCharlie", "password" ], 
-   [ "SeamanSam",      "password" ],
-   [ "SeamanSue",      "password" ],
-   [ "SeamanSly",      "password" ]
+   [ "AdmiralAbe",     "password", control.SecurityLevel.Secret ],  
+   [ "CaptainCharlie", "password", control.SecurityLevel.Privileged ], 
+   [ "SeamanSam",      "password", control.SecurityLevel.Confidential ],
+   [ "SeamanSue",      "password", control.SecurityLevel.Confidential ],
+   [ "SeamanSly",      "password", control.SecurityLevel.Confidential ]
 ]
 
 ###############################################################
@@ -45,9 +46,13 @@ class Interact:
     # Authenticate the user and get him/her all set up
     ##################################################
     def __init__(self, username, password, messages):
-        self._authenticate(username, password)
-        self._username = username
-        self._p_messages = messages
+        if self._authenticate(username, password):
+            self._username = username
+            self._subject_control = self._subject_control_from_user(username)
+            self._p_messages = messages
+        else:
+            print("Incorrect username or password.")  
+            return
 
     ##################################################
     # INTERACT :: SHOW
@@ -55,7 +60,7 @@ class Interact:
     ##################################################
     def show(self):
         id_ = self._prompt_for_id("display")
-        if not self._p_messages.show(id_):
+        if control.securityConditionRead(self._p_messages.find_by_id(id_).text_control, self._subject_control) and not self._p_messages.show(id_):
             print(f"ERROR! Message ID \'{id_}\' does not exist")
         print()
 
@@ -73,7 +78,8 @@ class Interact:
     # Add a single message
     ################################################## 
     def add(self):
-        self._p_messages.add(self._prompt_for_line("message"),
+        self._p_messages.add(control.SecurityLevel[self._prompt_for_line("Security Level")],
+                             self._prompt_for_line("message"),
                              self._username,
                              self._prompt_for_line("date"))
 
@@ -111,13 +117,29 @@ class Interact:
         return int(input(f"Select the message ID to {verb}: "))
 
     ##################################################
+    # INTERACT :: PROMPT FOR SECURITY LEVEL
+    # Prompt for the message SecurityLevel AKA text_control
+    ##################################################
+    #def _prompt_for_security_level(self, )
+
+    ##################################################
     # INTERACT :: AUTHENTICATE
     # Authenticate the user: find their control level
     ################################################## 
     def _authenticate(self, username, password):
         id_ = self._id_from_user(username)
         return ID_INVALID != id_ and password == users[id_].password
-
+        
+    ##################################################
+    # INTERACT :: SUBJECT CONTROL FROM USER
+    # Find the subject control of a given user
+    ##################################################
+    def _subject_control_from_user(self, username):
+        for id_user in range(len(users)):
+            if username == users[id_user].name:
+                return users[id_user].subject_control
+        return ID_INVALID #Should we be returning ID_INVALID here?
+        
     ##################################################
     # INTERACT :: ID FROM USER
     # Find the ID of a given user
