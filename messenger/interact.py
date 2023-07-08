@@ -78,10 +78,14 @@ class Interact:
     # Add a single message
     ################################################## 
     def add(self):
-        self._p_messages.add(control.SecurityLevel[self._prompt_for_line("Security Level")],
+        print(f"Security levels: Public, Confidential, Privileged, or Secret")
+        try:
+            self._p_messages.add(control.SecurityLevel[self._prompt_for_line("Security Level")],
                              self._prompt_for_line("message"),
                              self._username,
                              self._prompt_for_line("date"))
+        except:
+            print(f"ERROR! invalid security level. Must be: Public, Confidential, Privileged, or Secret")
 
     ##################################################
     # INTERACT :: UPDATE
