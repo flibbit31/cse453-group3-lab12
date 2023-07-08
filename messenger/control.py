@@ -19,9 +19,9 @@ class SecurityLevel(Enum):
 
 #SecurityLevel = Enum('SecurityLevel', ['Public', 'Confidential', 'Privileged', 'Secret'])
 
-def securityConditionRead(assetControl, subjectControl):
-    return subjectControl >= assetControl
+def securityConditionRead(assetControl : SecurityLevel, subjectControl : SecurityLevel):
+    return subjectControl.value >= assetControl.value
 
-def securityConditionWrite(assetControl, subjectControl):
-    return subjectControl <= assetControl
+def securityConditionWrite(assetControl : SecurityLevel, subjectControl : SecurityLevel):
+    return subjectControl.value <= assetControl.value
     
