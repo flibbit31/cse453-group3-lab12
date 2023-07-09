@@ -46,7 +46,7 @@ class Interact:
     # Authenticate the user and get him/her all set up
     ##################################################
     def __init__(self, username, password, messages):
-        if self._authenticate(username, password) == -1:
+        if self._authenticate(username, password) != -1:
             self._username = username
             self._subject_control = self._subject_control_from_user(username)
             self._p_messages = messages
@@ -61,8 +61,10 @@ class Interact:
     ##################################################
     def show(self):
         id_ = self._prompt_for_id("display")
-        if control.securityConditionRead(self._p_messages.find_by_id(id_).text_control, self._subject_control) and not self._p_messages.show(id_):
-            print(f"ERROR! Message ID \'{id_}\' does not exist")
+        message = self._p_messages.find_by_id(id_)
+        if not(message and control.securityConditionRead(self._p_messages.find_by_id(id_).text_control, self._subject_control) and self._p_messages.show(id_)):
+            print(f"ERROR! Message ID \'{id_}\' could not be read.")
+         
         print()
 
     ##################################################
@@ -71,7 +73,9 @@ class Interact:
     ################################################## 
     def display(self):
         print("Messages:")
-        self._p_messages.display()
+        for m in self._p_messages._messages:
+            if control.securityConditionRead(m.text_control, self._subject_control):
+                m.display_properties()
         print()
 
     ##################################################
@@ -94,7 +98,7 @@ class Interact:
     ################################################## 
     def update(self):
         id_ = self._prompt_for_id("update")
-        if not self._p_messages.show(id_):
+        if control.securityConditionWrite(self._p_messages.find_by_id(id_).text_control, self._subject_control) and not self._p_messages.show(id_):
             print(f"ERROR! Message ID \'{id_}\' does not exist\n")
             return
         self._p_messages.update(id_, self._prompt_for_line("message"))
@@ -105,7 +109,9 @@ class Interact:
     # Remove one message from the list
     ################################################## 
     def remove(self):
-        self._p_messages.remove(self._prompt_for_id("delete"))
+        id_ = self.self._prompt_for_id("delete")
+        if control.securityConditionRead(self._p_messages.find_by_id(id_).text_control, self._subject_control):
+            self._p_messages.remove(id_)
 
     ##################################################
     # INTERACT :: PROMPT FOR LINE
@@ -120,12 +126,6 @@ class Interact:
     ################################################## 
     def _prompt_for_id(self, verb):
         return int(input(f"Select the message ID to {verb}: "))
-
-    ##################################################
-    # INTERACT :: PROMPT FOR SECURITY LEVEL
-    # Prompt for the message SecurityLevel AKA text_control
-    ##################################################
-    #def _prompt_for_security_level(self, )
 
     ##################################################
     # INTERACT :: AUTHENTICATE
