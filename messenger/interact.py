@@ -109,7 +109,7 @@ class Interact:
     # Remove one message from the list
     ################################################## 
     def remove(self):
-        id_ = self.self._prompt_for_id("delete")
+        id_ = self._prompt_for_id("delete")
         if control.securityConditionRead(self._p_messages.find_by_id(id_).text_control, self._subject_control):
             self._p_messages.remove(id_)
 
