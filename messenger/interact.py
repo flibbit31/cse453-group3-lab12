@@ -46,13 +46,14 @@ class Interact:
     # Authenticate the user and get him/her all set up
     ##################################################
     def __init__(self, username, password, messages):
-        if self._authenticate(username, password):
+        if self._authenticate(username, password) == -1:
             self._username = username
             self._subject_control = self._subject_control_from_user(username)
             self._p_messages = messages
+            self._valid = True
         else:
             print("Incorrect username or password.")  
-            return
+            self._valid = False
 
     ##################################################
     # INTERACT :: SHOW
