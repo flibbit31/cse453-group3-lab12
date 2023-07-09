@@ -56,6 +56,10 @@ def session(messages):
     password = simple_prompt("What is your password? ")
 
     interact_ = interact.Interact(username, password, messages)
+    if not interact_._valid:
+        close_session()
+        return
+    
     print(f"\nWelcome, {username}. Please select an option:\n")
     display_options()
 
